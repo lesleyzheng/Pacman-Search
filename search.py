@@ -92,7 +92,8 @@ def depthFirstSearch(problem):
     nodeInit = Node(problem=problem, stateCurrent=problem.getStartState())
 
     if problem.isGoalState(nodeInit.nodeGetCurrentState()):
-        return "WIN" # here we need to return path taken to get to goal (1,1)
+        print "FIRST NODE IS SOLUTION"
+        return Solution(nodeInit)
 
     frontier = util.Stack()
     frontier.push(nodeInit)
@@ -108,45 +109,61 @@ def depthFirstSearch(problem):
         explored.add(currentNode.nodeGetCurrentState())
 
         for successor in problem.getSuccessors(currentNode.nodeGetCurrentState()):
-
+            print successor, "is a child of", currentNode.nodeGetCurrentState()
             childNode = Node(problem=problem, stateCurrent=successor[0], nodePrev=currentNode, action=successor[1])
 
             if childNode.nodeGetCurrentState() not in explored:
-
+                print childNode.nodeGetCurrentState(), "not in explored"
                 # check goal state
                 if problem.isGoalState(childNode.nodeGetCurrentState()):
+                    print childNode.nodeGetCurrentState(), "is a goal state"
                     return Solution(childNode)
                 else:
+                    print "adding", childNode.nodeGetCurrentState(), "to frontier"
                     frontier.push(childNode)
 
-    return "FAILURE"
+    return None
     # util.raiseNotDefined()
 
+'''def Solution(backTraceStartNode):
+     nodePath = util.Stack()
+try:
+     nodePath.push(Solution(backTraceStartNode.nodeGetPrevState()))
+ except AttributeError:
+     # reached the end of the "list"
+     print "Reached path start"
+
+     # traverse nodePath
+     actions = list()
+     while nodePath.isEmpty() == False:
+         currentNodeForPath = nodePath.pop()
+         print type(currentNodeForPath)
+         a = currentNodeForPath.nodeGetAction()
+         actions.append(a)
+
+     print "CHECK:"
+     print actions
+     print ""
+
+     return actions
+ print "FAIL AT SOLUTION"
+ return []
+'''
 def Solution(backTraceStartNode):
-
-    nodePath = util.Stack()
-    try:
-        nodePath.push(Solution(backTraceStartNode.nodeGetPrevState()))
-    except AttributeError:
-        # reached the end of the "list"
-        print "Reached path start"
-
-        # traverse nodePath
-        actions = list()
-        while nodePath.isEmpty() == False:
-            currentNodeForPath = nodePath.pop()
-            print type(currentNodeForPath)
-            a = currentNodeForPath.nodeGetAction()
-            actions.append(a)
-
-        print "CHECK:"
-        print actions
-        print ""
-
-        return actions
-    print "FAIL AT SOLUTION"
-    return []
-
+    currentNode = backTraceStartNode
+    actions = []
+    actions.append(currentNode.nodeGetAction())
+    while currentNode.nodeGetPrevState() != None:
+        print "current node = ", currentNode.nodeGetCurrentState()
+        currentNode = currentNode.nodeGetPrevState()
+        print "prev node = ", currentNode.nodeGetCurrentState()
+        if currentNode.nodeGetAction() != None:
+            actions.append(currentNode.nodeGetAction())
+        print "Actions = ", actions
+    print "Actions = ", actions
+    actions.reverse()
+    print "Actions reversed = ", actions
+    return actions
 
 class Node:
 
