@@ -144,11 +144,12 @@ def Solution(backTraceStartNode):
 
 class Node:
 
-    def __init__(self, problem, stateCurrent, nodePrev = None, action=None):
+    def __init__(self, problem, stateCurrent, cost=1, nodePrev = None, action=None):
         self.nodeProblem = problem
         self.nodeCurrentState = stateCurrent
         self.nodePrevNode = nodePrev
         self.nodeAction = action
+        self.nodeCost = cost
 
     def nodeGetCurrentState(self):
 
@@ -165,6 +166,10 @@ class Node:
     def nodeGetAction(self):
 
         return self.nodeAction
+
+    def nodeGetCost(self):
+
+        return self.nodeCost
 
 
 def breadthFirstSearch(problem):
@@ -215,8 +220,47 @@ def breadthFirstSearch(problem):
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
-    print "test"
+    print "Start:", problem.getStartState()
+    print "Is the start a goal?", problem.isGoalState(problem.getStartState())
+    print "Start's successors:", problem.getSuccessors(problem.getStartState())
+    print "Goal: ", problem.goal
+
+    "*** YOUR CODE HERE ***"
+
+    nodeInit = Node(problem=problem, stateCurrent=problem.getStartState()) # don't need to set cost bc its the first and only item so far
+
+    if problem.isGoalState(nodeInit.nodeGetCurrentState()):
+        print "FIRST NODE IS SOLUTION"
+        return Solution(nodeInit)
+
+    frontier = util.PriorityQueue()
+    frontier.push(nodeInit, 0)
+
+    explored = set()
+
+    while frontier.isEmpty() != True:  ## SOMETHING
+
+        # if frontier.isEmpty():
+        #     return "LOSE"
+
+        currentNode = frontier.pop()
+        explored.add(currentNode.nodeGetCurrentState())
+
+        for successor in problem.getSuccessors(currentNode.nodeGetCurrentState()):
+            print successor, "is a child of", currentNode.nodeGetCurrentState()
+            childNode = Node(problem=problem, stateCurrent=successor[0], nodePrev=currentNode, action=successor[1], cost=successor[2])
+
+            if childNode.nodeGetCurrentState() not in explored:
+                print childNode.nodeGetCurrentState(), "not in explored"
+                # check goal state
+                if problem.isGoalState(childNode.nodeGetCurrentState()):
+                    print childNode.nodeGetCurrentState(), "is a goal state"
+                    return Solution(childNode)
+                else:
+                    print "adding", childNode.nodeGetCurrentState(), "to frontier"
+                    frontier.push(childNode, childNode.nodeGetCost())
+
+    return None
 
 def nullHeuristic(state, problem=None):
     """
