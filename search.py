@@ -19,6 +19,55 @@ Pacman agents (in searchAgents.py).
 
 import util
 
+#===========================================Basic Structure===========================================
+class Node:
+
+    def __init__(self, problem, stateCurrent, cost=1, nodePrev = None, action=None):
+        self.nodeProblem = problem
+        self.nodeCurrentState = stateCurrent
+        self.nodePrevNode = nodePrev
+        self.nodeAction = action
+        self.nodeCost = cost
+
+    def nodeGetCurrentState(self):
+
+        return self.nodeCurrentState
+
+    def nodeGetPrevState(self):
+
+        return self.nodePrevNode
+
+    def nodeGetProblem(self):
+
+        return self.nodeProblem
+
+    def nodeGetAction(self):
+
+        return self.nodeAction
+
+    def nodeGetCost(self):
+
+        return self.nodeCost
+
+
+def Solution(backTraceStartNode):
+    currentNode = backTraceStartNode
+    actions = []
+    actions.append(currentNode.nodeGetAction())
+    while currentNode.nodeGetPrevState() != None:
+
+        currentNode = currentNode.nodeGetPrevState()
+
+        if currentNode.nodeGetAction() != None:
+            actions.append(currentNode.nodeGetAction())
+
+
+    actions.reverse()
+
+    return actions
+
+
+#=======================================================================================================
 class SearchProblem:
     """
     This class outlines the structure of a search problem, but doesn't implement
@@ -114,52 +163,6 @@ def depthFirstSearch(problem):
                     frontier.push(childNode)
 
     return None
-
-
-def Solution(backTraceStartNode):
-    currentNode = backTraceStartNode
-    actions = []
-    actions.append(currentNode.nodeGetAction())
-    while currentNode.nodeGetPrevState() != None:
-
-        currentNode = currentNode.nodeGetPrevState()
-
-        if currentNode.nodeGetAction() != None:
-            actions.append(currentNode.nodeGetAction())
-
-
-    actions.reverse()
-
-    return actions
-
-class Node:
-
-    def __init__(self, problem, stateCurrent, cost=1, nodePrev = None, action=None):
-        self.nodeProblem = problem
-        self.nodeCurrentState = stateCurrent
-        self.nodePrevNode = nodePrev
-        self.nodeAction = action
-        self.nodeCost = cost
-
-    def nodeGetCurrentState(self):
-
-        return self.nodeCurrentState
-
-    def nodeGetPrevState(self):
-
-        return self.nodePrevNode
-
-    def nodeGetProblem(self):
-
-        return self.nodeProblem
-
-    def nodeGetAction(self):
-
-        return self.nodeAction
-
-    def nodeGetCost(self):
-
-        return self.nodeCost
 
 
 def breadthFirstSearch(problem):
