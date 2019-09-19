@@ -82,17 +82,11 @@ def depthFirstSearch(problem):
     To get started, you might want to try some of these simple commands to
     understand the search problem that is being passed in:
     """
-    print "Start:", problem.getStartState()
-    print "Is the start a goal?", problem.isGoalState(problem.getStartState())
-    print "Start's successors:", problem.getSuccessors(problem.getStartState())
-    print "Goal: ", problem.goal
-
-    "*** YOUR CODE HERE ***"
 
     nodeInit = Node(problem=problem, stateCurrent=problem.getStartState())
 
     if problem.isGoalState(nodeInit.nodeGetCurrentState()):
-        print "FIRST NODE IS SOLUTION"
+
         return Solution(nodeInit)
 
     frontier = util.Stack()
@@ -102,28 +96,24 @@ def depthFirstSearch(problem):
 
     while frontier.isEmpty() != True:## SOMETHING
 
-        # if frontier.isEmpty():
-        #     return "LOSE"
-
         currentNode = frontier.pop()
         explored.add(currentNode.nodeGetCurrentState())
 
         for successor in problem.getSuccessors(currentNode.nodeGetCurrentState()):
-            print successor, "is a child of", currentNode.nodeGetCurrentState()
+
             childNode = Node(problem=problem, stateCurrent=successor[0], nodePrev=currentNode, action=successor[1])
 
             if childNode.nodeGetCurrentState() not in explored:
-                print childNode.nodeGetCurrentState(), "not in explored"
+
                 # check goal state
                 if problem.isGoalState(childNode.nodeGetCurrentState()):
-                    print childNode.nodeGetCurrentState(), "is a goal state"
+
                     return Solution(childNode)
                 else:
-                    print "adding", childNode.nodeGetCurrentState(), "to frontier"
+
                     frontier.push(childNode)
 
     return None
-    # util.raiseNotDefined()
 
 
 def Solution(backTraceStartNode):
@@ -174,18 +164,11 @@ class Node:
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
-    "*** YOUR CODE HERE ***"
-    print "Start:", problem.getStartState()
-    print "Is the start a goal?", problem.isGoalState(problem.getStartState())
-    print "Start's successors:", problem.getSuccessors(problem.getStartState())
-    print "Goal: ", problem.goal
-
-    "*** YOUR CODE HERE ***"
 
     nodeInit = Node(problem=problem, stateCurrent=problem.getStartState())
 
     if problem.isGoalState(nodeInit.nodeGetCurrentState()):
-        print "FIRST NODE IS SOLUTION"
+
         return Solution(nodeInit)
 
     frontier = util.Queue()
@@ -195,42 +178,32 @@ def breadthFirstSearch(problem):
 
     while frontier.isEmpty() != True:  ## SOMETHING
 
-        # if frontier.isEmpty():
-        #     return "LOSE"
-
         currentNode = frontier.pop()
         explored.add(currentNode.nodeGetCurrentState())
 
         for successor in problem.getSuccessors(currentNode.nodeGetCurrentState()):
-            print successor, "is a child of", currentNode.nodeGetCurrentState()
+
             childNode = Node(problem=problem, stateCurrent=successor[0], nodePrev=currentNode, action=successor[1])
 
             if childNode.nodeGetCurrentState() not in explored:
-                print childNode.nodeGetCurrentState(), "not in explored"
+
                 # check goal state
                 if problem.isGoalState(childNode.nodeGetCurrentState()):
-                    print childNode.nodeGetCurrentState(), "is a goal state"
+
                     return Solution(childNode)
                 else:
-                    print "adding", childNode.nodeGetCurrentState(), "to frontier"
+
                     frontier.push(childNode)
 
     return None
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
-    "*** YOUR CODE HERE ***"
-    print "Start:", problem.getStartState()
-    print "Is the start a goal?", problem.isGoalState(problem.getStartState())
-    print "Start's successors:", problem.getSuccessors(problem.getStartState())
-    print "Goal: ", problem.goal
-
-    "*** YOUR CODE HERE ***"
 
     nodeInit = Node(problem=problem, stateCurrent=problem.getStartState()) # don't need to set cost bc its the first and only item so far
 
     if problem.isGoalState(nodeInit.nodeGetCurrentState()):
-        print "FIRST NODE IS SOLUTION"
+
         return Solution(nodeInit)
 
     frontier = util.PriorityQueue()
@@ -247,17 +220,17 @@ def uniformCostSearch(problem):
         explored.add(currentNode.nodeGetCurrentState())
 
         for successor in problem.getSuccessors(currentNode.nodeGetCurrentState()):
-            print successor, "is a child of", currentNode.nodeGetCurrentState()
+
             childNode = Node(problem=problem, stateCurrent=successor[0], nodePrev=currentNode, action=successor[1], cost=successor[2])
 
             if childNode.nodeGetCurrentState() not in explored:
-                print childNode.nodeGetCurrentState(), "not in explored"
+
                 # check goal state
                 if problem.isGoalState(childNode.nodeGetCurrentState()):
-                    print childNode.nodeGetCurrentState(), "is a goal state"
+
                     return Solution(childNode)
                 else:
-                    print "adding", childNode.nodeGetCurrentState(), "to frontier"
+
                     frontier.push(childNode, childNode.nodeGetCost())
 
     return None
