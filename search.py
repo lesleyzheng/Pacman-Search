@@ -22,12 +22,13 @@ import util
 #===========================================Basic Structure===========================================
 class Node:
 
-    def __init__(self, problem, stateCurrent, cost=1, nodePrev = None, action=None):
+    def __init__(self, problem, stateCurrent, cost=1, heuristicCost = 0, nodePrev = None, action=None):
         self.nodeProblem = problem
         self.nodeCurrentState = stateCurrent
         self.nodePrevNode = nodePrev
         self.nodeAction = action
         self.nodeCost = cost
+        self.nodeHeuristicCost = heuristicCost
 
     def nodeGetCurrentState(self):
 
@@ -48,6 +49,10 @@ class Node:
     def nodeGetCost(self):
 
         return self.nodeCost
+
+    def nodeGetHeuristicCost(self):
+
+        return self.nodeHeuristicCost
 
 
 def Solution(backTraceStartNode):
@@ -143,22 +148,19 @@ def depthFirstSearch(problem):
 
     explored = set()
 
-    while frontier.isEmpty() != True:## SOMETHING
+    while frontier.isEmpty() != True:
 
         currentNode = frontier.pop()
-        explored.add(currentNode.nodeGetCurrentState())
+        if problem.isGoalState(currentNode.nodeGetCurrentState()):
+            return Solution(currentNode)
+        if currentNode.nodeGetCurrentState() not in explored:
+            explored.add(currentNode.nodeGetCurrentState())
 
-        for successor in problem.getSuccessors(currentNode.nodeGetCurrentState()):
+            for successor in problem.getSuccessors(currentNode.nodeGetCurrentState()):
 
-            childNode = Node(problem=problem, stateCurrent=successor[0], nodePrev=currentNode, action=successor[1])
+                childNode = Node(problem=problem, stateCurrent=successor[0], nodePrev=currentNode, action=successor[1])
 
-            if childNode.nodeGetCurrentState() not in explored:
-
-                # check goal state
-                if problem.isGoalState(childNode.nodeGetCurrentState()):
-
-                    return Solution(childNode)
-                else:
+                if childNode.nodeGetCurrentState() not in explored:
 
                     frontier.push(childNode)
 
@@ -179,22 +181,19 @@ def breadthFirstSearch(problem):
 
     explored = set()
 
-    while frontier.isEmpty() != True:  ## SOMETHING
+    while frontier.isEmpty() != True:
 
         currentNode = frontier.pop()
-        explored.add(currentNode.nodeGetCurrentState())
+        if problem.isGoalState(currentNode.nodeGetCurrentState()):
+            return Solution(currentNode)
+        if currentNode.nodeGetCurrentState() not in explored:
+            explored.add(currentNode.nodeGetCurrentState())
 
-        for successor in problem.getSuccessors(currentNode.nodeGetCurrentState()):
+            for successor in problem.getSuccessors(currentNode.nodeGetCurrentState()):
 
-            childNode = Node(problem=problem, stateCurrent=successor[0], nodePrev=currentNode, action=successor[1])
+                childNode = Node(problem=problem, stateCurrent=successor[0], nodePrev=currentNode, action=successor[1])
 
-            if childNode.nodeGetCurrentState() not in explored:
-
-                # check goal state
-                if problem.isGoalState(childNode.nodeGetCurrentState()):
-
-                    return Solution(childNode)
-                else:
+                if childNode.nodeGetCurrentState() not in explored:
 
                     frontier.push(childNode)
 
@@ -214,25 +213,21 @@ def uniformCostSearch(problem):
 
     explored = set()
 
-    while frontier.isEmpty() != True:  ## SOMETHING
+    while frontier.isEmpty() != True:
 
-        # if frontier.isEmpty():
-        #     return "LOSE"
 
         currentNode = frontier.pop()
-        explored.add(currentNode.nodeGetCurrentState())
+        if problem.isGoalState(currentNode.nodeGetCurrentState()):
+            return Solution(currentNode)
 
-        for successor in problem.getSuccessors(currentNode.nodeGetCurrentState()):
+        if currentNode.nodeGetCurrentState() not in explored:
+            explored.add(currentNode.nodeGetCurrentState())
 
-            childNode = Node(problem=problem, stateCurrent=successor[0], nodePrev=currentNode, action=successor[1], cost=successor[2])
+            for successor in problem.getSuccessors(currentNode.nodeGetCurrentState()):
 
-            if childNode.nodeGetCurrentState() not in explored:
+                childNode = Node(problem=problem, stateCurrent=successor[0], nodePrev=currentNode, action=successor[1], cost=successor[2] + currentNode.nodeGetCost())
 
-                # check goal state
-                if problem.isGoalState(childNode.nodeGetCurrentState()):
-
-                    return Solution(childNode)
-                else:
+                if childNode.nodeGetCurrentState() not in explored:
 
                     frontier.push(childNode, childNode.nodeGetCost())
 
@@ -246,13 +241,11 @@ def nullHeuristic(state, problem=None):
     return 0
 
 def aStarCost(gn, position, problem, heuristic=nullHeuristic):
-
+    # gn is the total cost up until position
+    # hn is estimated cost from position to goal
+    # fn is total estimated cost from start to goal along that path
     hn = heuristic(position, problem)
     fn = hn+gn
-
-    print "inside aStarCost!"
-    print "fn = ", fn
-    print "hn = ", hn
 
     return fn
 
@@ -271,28 +264,23 @@ def aStarSearch(problem, heuristic=nullHeuristic):
 
     explored = set()
 
-    while frontier.isEmpty() != True:  ## SOMETHING
+    while frontier.isEmpty() != True:
 
         currentNode = frontier.pop()
-        explored.add(currentNode.nodeGetCurrentState())
+        if problem.isGoalState(currentNode.nodeGetCurrentState()):
+            return Solution(currentNode)
+        if currentNode.nodeGetCurrentState() not in explored:
+            explored.add(currentNode.nodeGetCurrentState())
+            for successor in problem.getSuccessors(currentNode.nodeGetCurrentState()):
 
-        for successor in problem.getSuccessors(currentNode.nodeGetCurrentState()):
+                childNode = Node(problem=problem, stateCurrent=successor[0], nodePrev=currentNode, action=successor[1],
+                                 cost=successor[2] + currentNode.nodeGetCost(),
+                                 heuristicCost=aStarCost(gn=(successor[2] + currentNode.nodeGetCost()),
+                                                         position=successor[0], problem=problem, heuristic=heuristic))
 
-            childNode = Node(problem=problem, stateCurrent=successor[0], nodePrev=currentNode, action=successor[1],
-                             cost=aStarCost(gn=successor[2], position=successor[0], problem=problem, heuristic=heuristic))
+                if childNode.nodeGetCurrentState() not in explored:
 
-            if childNode.nodeGetCurrentState() not in explored:
-
-                # check goal state
-                if problem.isGoalState(childNode.nodeGetCurrentState()):
-
-                    return Solution(childNode)
-                else:
-
-                    frontier.push(childNode, childNode.nodeGetCost())
-
-                    print "pushing new item to frontier"
-                    frontier.printPQ()
+                    frontier.push(childNode, childNode.nodeGetHeuristicCost())
 
     return None
 

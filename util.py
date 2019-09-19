@@ -191,12 +191,6 @@ class PriorityQueue:
     def isEmpty(self):
         return len(self.heap) == 0
 
-    def printPQ(self):
-
-        print "==========DISPLAYING PRIORITY QUEUE CURRENT STATE==========="
-        for item in self.heap:
-            print item
-        print "========pq display============="
 
 
     def update(self, item, priority):
