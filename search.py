@@ -170,7 +170,47 @@ class Node:
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    print "Start:", problem.getStartState()
+    print "Is the start a goal?", problem.isGoalState(problem.getStartState())
+    print "Start's successors:", problem.getSuccessors(problem.getStartState())
+    print "Goal: ", problem.goal
+
+    "*** YOUR CODE HERE ***"
+
+    nodeInit = Node(problem=problem, stateCurrent=problem.getStartState())
+
+    if problem.isGoalState(nodeInit.nodeGetCurrentState()):
+        print "FIRST NODE IS SOLUTION"
+        return Solution(nodeInit)
+
+    frontier = util.Queue()
+    frontier.push(nodeInit)
+
+    explored = set()
+
+    while frontier.isEmpty() != True:  ## SOMETHING
+
+        # if frontier.isEmpty():
+        #     return "LOSE"
+
+        currentNode = frontier.pop()
+        explored.add(currentNode.nodeGetCurrentState())
+
+        for successor in problem.getSuccessors(currentNode.nodeGetCurrentState()):
+            print successor, "is a child of", currentNode.nodeGetCurrentState()
+            childNode = Node(problem=problem, stateCurrent=successor[0], nodePrev=currentNode, action=successor[1])
+
+            if childNode.nodeGetCurrentState() not in explored:
+                print childNode.nodeGetCurrentState(), "not in explored"
+                # check goal state
+                if problem.isGoalState(childNode.nodeGetCurrentState()):
+                    print childNode.nodeGetCurrentState(), "is a goal state"
+                    return Solution(childNode)
+                else:
+                    print "adding", childNode.nodeGetCurrentState(), "to frontier"
+                    frontier.push(childNode)
+
+    return None
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
