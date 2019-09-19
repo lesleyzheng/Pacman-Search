@@ -125,30 +125,7 @@ def depthFirstSearch(problem):
     return None
     # util.raiseNotDefined()
 
-'''def Solution(backTraceStartNode):
-     nodePath = util.Stack()
-try:
-     nodePath.push(Solution(backTraceStartNode.nodeGetPrevState()))
- except AttributeError:
-     # reached the end of the "list"
-     print "Reached path start"
 
-     # traverse nodePath
-     actions = list()
-     while nodePath.isEmpty() == False:
-         currentNodeForPath = nodePath.pop()
-         print type(currentNodeForPath)
-         a = currentNodeForPath.nodeGetAction()
-         actions.append(a)
-
-     print "CHECK:"
-     print actions
-     print ""
-
-     return actions
- print "FAIL AT SOLUTION"
- return []
-'''
 def Solution(backTraceStartNode):
     currentNode = backTraceStartNode
     actions = []
