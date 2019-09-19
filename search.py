@@ -131,15 +131,15 @@ def Solution(backTraceStartNode):
     actions = []
     actions.append(currentNode.nodeGetAction())
     while currentNode.nodeGetPrevState() != None:
-        print "current node = ", currentNode.nodeGetCurrentState()
+
         currentNode = currentNode.nodeGetPrevState()
-        print "prev node = ", currentNode.nodeGetCurrentState()
+
         if currentNode.nodeGetAction() != None:
             actions.append(currentNode.nodeGetAction())
-        print "Actions = ", actions
-    print "Actions = ", actions
+
+
     actions.reverse()
-    print "Actions reversed = ", actions
+
     return actions
 
 class Node:
@@ -269,10 +269,53 @@ def nullHeuristic(state, problem=None):
     """
     return 0
 
+def aStarCost(gn, position, problem, heuristic=nullHeuristic):
+
+    hn = heuristic(position, problem)
+    fn = hn+gn
+
+    print "inside aStarCost!"
+    print "fn = ", fn
+    print "hn = ", hn
+
+    return fn
+
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+
+    nodeInit = Node(problem=problem,
+                    stateCurrent=problem.getStartState())  # don't need to set cost bc its the first and only item so far
+
+    if problem.isGoalState(nodeInit.nodeGetCurrentState()):
+        print "FIRST NODE IS SOLUTION"
+        return Solution(nodeInit)
+
+    frontier = util.PriorityQueue()
+    frontier.push(nodeInit, 0)
+
+    explored = set()
+
+    while frontier.isEmpty() != True:  ## SOMETHING
+
+        currentNode = frontier.pop()
+        explored.add(currentNode.nodeGetCurrentState())
+
+        for successor in problem.getSuccessors(currentNode.nodeGetCurrentState()):
+
+            childNode = Node(problem=problem, stateCurrent=successor[0], nodePrev=currentNode, action=successor[1],
+                             cost=aStarCost(gn=successor[2], position=successor[0], problem=problem, heuristic=heuristic))
+
+            if childNode.nodeGetCurrentState() not in explored:
+
+                # check goal state
+                if problem.isGoalState(childNode.nodeGetCurrentState()):
+
+                    return Solution(childNode)
+                else:
+
+                    frontier.push(childNode, childNode.nodeGetCost())
+
+    return None
 
 
 # Abbreviations
