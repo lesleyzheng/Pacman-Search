@@ -315,6 +315,9 @@ def aStarSearch(problem, heuristic=nullHeuristic):
 
                     frontier.push(childNode, childNode.nodeGetCost())
 
+                    print "pushing new item to frontier"
+                    frontier.printPQ()
+
     return None
 
 
