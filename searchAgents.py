@@ -266,6 +266,42 @@ def euclideanHeuristic(position, problem, info={}):
 # This portion is incomplete.  Time to write code!  #
 #####################################################
 
+class cornerState():
+
+## we don't need to store location of the corner, just if its been visited or not!!
+    def __init__(self, bottomLeft, topLeft, bottomRight, topRight, pacmanPos):
+        self.bottomLeft = bottomLeft
+        self.topLeft = topLeft
+        self.bottomRight = bottomRight
+        self.topRight = topRight
+        self.pacmanPos = pacmanPos
+        #self.cornerStateCorners = [self.bottomLeft, self.topLeft, self.bottomRight, self.topRight]
+
+    def getTopRightVisited(self):
+        return self.topRight
+
+    def getBottomRightVisited(self):
+        return self.bottomRight
+
+    def getTopLeftVisited(self):
+        return self.topLeft
+
+    def getBottomLeftVisited(self):
+        return self.bottomLeft
+
+    def getPacmanPos(self):
+        return self.pacmanPos
+
+    def setBottomLeft(self, tOrF):
+        self.bottomLeft = tOrF
+
+    def printCornerState(self):
+        print self.pacmanPos, self.getBottomLeftVisited(), \
+            self.getTopLeftVisited(), \
+            self.getBottomRightVisited(), \
+            self.getTopRightVisited()
+
+
 class CornersProblem(search.SearchProblem):
     """
     This search problem finds paths through all four corners of a layout.
@@ -289,20 +325,39 @@ class CornersProblem(search.SearchProblem):
         # in initializing the problem
         "*** YOUR CODE HERE ***"
 
+        self.startCornerState = cornerState(pacmanPos=self.startingPosition,
+                                   bottomLeft=False,
+                                   topLeft=False,
+                                   bottomRight=False,
+                                   topRight=False)
+        print "startCornerState = ", self.startCornerState.printCornerState()
+
     def getStartState(self):
         """
         Returns the start state (in your state space, not the full Pacman state
         space)
         """
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        return self.startCornerState
 
     def isGoalState(self, state):
         """
         Returns whether this search state is a goal state of the problem.
         """
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+
+        if state.getBottomLeftVisited() == False:  # Check if the bottom Left has been visited; if not, not a goal state
+            # print "not goal state because Bottom Left hasn't been visited"
+            return False
+        if state.getTopLeftVisited() == False:          # Check if the top Left has been visited; if not, not a goal state
+            # print "not goal state because Top Left hasn't been visited"
+            return False
+        if state.getBottomRightVisited() == False:      # Check if the bottom Right has been visited; if not, not a goal state
+            # print "not goal state because Bottom Right hasn't been visited"
+            return False
+        if state.getTopRightVisited() == False:         # Check if the top Right has been visited; if not, not a goal state
+            # print "not goal state because Top Right hasn't been visited"
+            return False
+        return True                                     # Only if all 4 corners have been visited should you return true
+        #util.raiseNotDefined()
 
     def getSuccessors(self, state):
         """
@@ -324,7 +379,31 @@ class CornersProblem(search.SearchProblem):
             #   nextx, nexty = int(x + dx), int(y + dy)
             #   hitsWall = self.walls[nextx][nexty]
 
-            "*** YOUR CODE HERE ***"
+            x, y = state.getPacmanPos()                 # Get Pacman's current position (x,y)
+            dx, dy = Actions.directionToVector(action)  # Get distance of step the action will take Pacman
+            nextx, nexty = int(x + dx), int(y + dy)     # Find Pacman's new position if it takes that action
+            hitsWall = self.walls[nextx][nexty]         # Check if Pacman will hit a wall if it takes that action
+            if not hitsWall:
+
+                print "Adding ", nextx, nexty, "as a nextState"
+                nextState = cornerState(pacmanPos = (nextx, nexty),         # Create a new CornerState object, which contains the new position,
+                                        bottomLeft = state.getBottomLeftVisited(),  # the old bottomLeft state (position and if it's been visited)
+                                        topLeft = state.getTopLeftVisited(),     # the old topLeft state (position and if it's been visited)
+                                        bottomRight = state.getBottomRightVisited(), # the old bottomRight state (position and if it's been visited)
+                                        topRight = state.getTopRightVisited())    # the old topRight state (position and if it's been visited)
+                print nextState.printCornerState()
+                # check if the new Pacman position is in a corner. if it is, update nextState to show that the corner has been visited
+                for i in range(0, 4):
+                    if (nextx, nexty) == self.corners[i]:
+                        if i == 0:
+                            nextState.bottomLeft = True
+                        if i == 1:
+                            nextState.topLeft = True
+                        if i == 2:
+                            nextState.bottomRight = True
+                        if i == 3:
+                            nextState.topRight = True
+                successors.append((nextState, action, 1))
 
         self._expanded += 1 # DO NOT CHANGE
         return successors
