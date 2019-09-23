@@ -262,9 +262,14 @@ def euclideanHeuristic(position, problem, info={}):
     xy2 = problem.goal
     return ( (xy1[0] - xy2[0]) ** 2 + (xy1[1] - xy2[1]) ** 2 ) ** 0.5
 
-def min_manhattan_euclidean_Heuristic(position, problem):
+def max_manhattan_euclidean_Heuristic(position, goal):
     xy1 = position
-    xy2 = problem.goal
+    xy2 = goal
+    return max(((xy1[0] - xy2[0]) ** 2 + (xy1[1] - xy2[1]) ** 2) ** 0.5, abs(xy1[0] - xy2[0]) + abs(xy1[1] - xy2[1]))
+
+def min_manhattan_euclidean_Heuristic(position, goal):
+    xy1 = position
+    xy2 = goal
     return min(((xy1[0] - xy2[0]) ** 2 + (xy1[1] - xy2[1]) ** 2) ** 0.5, abs(xy1[0] - xy2[0]) + abs(xy1[1] - xy2[1]))
 
 #####################################################
@@ -403,14 +408,24 @@ def cornersHeuristic(state, problem):
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
 
     "*** YOUR CODE HERE ***"
-    xy1 = state[0]
+    position = state[0] #tuple of current pacman position
 
     #find all min euclidean manhattan distances to all corners
+    min = 9999999999999
+    for i in range(1, len(state)):
+        if state[i] == False:
 
+            #only considering corners unvisited
+            distance_to_corner = min_manhattan_euclidean_Heuristic(position, corners[i-1])
 
+            #complication with walls
+            #maybe
 
+            if distance_to_corner < min:
+                min = distance_to_corner
 
-    return 0 # Default to trivial solution
+    return min
+
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
