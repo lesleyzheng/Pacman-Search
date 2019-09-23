@@ -342,22 +342,21 @@ class CornersProblem(search.SearchProblem):
             # Here's a code snippet for figuring out whether a new position hits a wall:
             x,y = state.pacmanPos
             print "x, y  = ", x,y
-            print "corners ", self.corners
             dx, dy = Actions.directionToVector(action)
             nextx, nexty = int(x + dx), int(y + dy)
             print "nextx, nexty = ", nextx, nexty
             hitsWall = self.walls[nextx][nexty]
             if not hitsWall:
                 print nextx, nexty, "doesn't hit a wall"
-                nextState = CornerState(pacPos=(nextx, nexty))
-                if (nextx, nexty) in self.corners:
+                nextState = CornerState(pacPos=(nextx, nexty))  # create a cornerState with the new position
+                if (nextx, nexty) in self.corners:              # if it's a corner, add the corner to the visited set
                     print nextx, nexty, "is a corner"
                     if state.cornersVisited == None:
                         nextState.cornersVisited = set( (nextx, nexty) )
                     else:
                         nextState.cornersVisited = state.cornersVisited.add( (nextx, nexty) )
                 else:
-                    nextState.cornersVisited = state.cornersVisited
+                    nextState.cornersVisited = state.cornersVisited     #if it's not a corner, just add previous set of visited Corners
                 successors.append( (nextState, action, 1) )
 
 
