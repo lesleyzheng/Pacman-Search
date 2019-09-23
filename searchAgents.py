@@ -298,6 +298,7 @@ class CornersProblem(search.SearchProblem):
         self.startState = CornerState(pacPos = self.startingPosition,
                                       corners = set())
 
+
     def getStartState(self):
         """
         Returns the start state (in your state space, not the full Pacman state
