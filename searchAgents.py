@@ -11,7 +11,7 @@
 # Student side autograding was added by Brad Miller, Nick Hay, and
 # Pieter Abbeel (pabbeel@cs.berkeley.edu).
 
-
+import copy
 """
 This file contains all of the agents that can be selected to control Pacman.  To
 select an agent, use the '-p' option when running pacman.py.  Arguments can be
@@ -266,11 +266,7 @@ def euclideanHeuristic(position, problem, info={}):
 # This portion is incomplete.  Time to write code!  #
 #####################################################
 
-class CornerState:
 
-    def __init__(self, pacPos, corners = set()):
-        self.pacmanPos = pacPos
-        self.cornersVisited = corners
 
 class CornersProblem(search.SearchProblem):
     """
@@ -292,11 +288,6 @@ class CornersProblem(search.SearchProblem):
                 print 'Warning: no food in corner ' + str(corner)
         self._expanded = 0 # DO NOT CHANGE; Number of search nodes expanded
         # Please add any code here which you would like to use
-        # in initializing the problem
-        "*** YOUR CODE HERE ***"
-
-        self.startState = CornerState(pacPos = self.startingPosition,
-                                      corners = set())
 
 
     def getStartState(self):
@@ -304,7 +295,9 @@ class CornersProblem(search.SearchProblem):
         Returns the start state (in your state space, not the full Pacman state
         space)
         """
-        return self.startState
+        #
+
+        return (self.startingPosition, False, False, False, False)
         #util.raiseNotDefined()
 
 
@@ -313,17 +306,13 @@ class CornersProblem(search.SearchProblem):
         Returns whether this search state is a goal state of the problem.
                                # Only if all 4 corners have been visited should you return true
         """
-        goal = self.corners
-        print "Self.corners = ", self.corners
-        print "state.cornersVisited = ", state.cornersVisited
-        if state.cornersVisited == None:
-            return False
-        else:
-            if set(state.cornersVisited) == set(goal):
-                print "============================== GOAL STATE =============================="
-                return True
-        return False
-        #util.raiseNotDefined()
+
+        for i in range(1, len(state)):
+            if state[i] == False:
+                return False
+        print "============================== GOAL STATE =============================="
+        return True
+
 
     def getSuccessors(self, state):
         """
@@ -335,37 +324,47 @@ class CornersProblem(search.SearchProblem):
             state, 'action' is the action required to get there, and 'stepCost'
             is the incremental cost of expanding to that successor
         """
-        print state.pacmanPos, state.cornersVisited
         successors = []
-       # while not all(corner == False for corner in state.corners):
         for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
-            # Add a successor state to the successor list if the action is legal
-            # Here's a code snippet for figuring out whether a new position hits a wall:
-            x,y = state.pacmanPos
-            print "x, y  = ", x,y
+            x, y = state[0]
             dx, dy = Actions.directionToVector(action)
             nextx, nexty = int(x + dx), int(y + dy)
-            print "nextx, nexty = ", nextx, nexty
-            hitsWall = self.walls[nextx][nexty]
-            if not hitsWall:
-                print nextx, nexty, "doesn't hit a wall"
-                nextState = CornerState(pacPos=(nextx, nexty))  # create a cornerState with the new position
-                if (nextx, nexty) in self.corners:              # if it's a corner, add the corner to the visited set
-                    print nextx, nexty, "is a corner"
-                    if state.cornersVisited == None:
-                        nextState.cornersVisited = set( (nextx, nexty) )
-                    else:
-                        nextState.cornersVisited = state.cornersVisited.add( (nextx, nexty) )
+            if not self.walls[nextx][nexty]:
+                nextState = (nextx, nexty)
+
+                # task is to create another "state" and check if the next state position hits a wall
+                which_corner_or_none = self.isCorner(nextState)
+
+                if which_corner_or_none == 0:
+                    successors.append(((nextState, True, state[2], state[3], state[4]), action, 1))
+                elif which_corner_or_none == 1:
+                    successors.append(((nextState, state[1], True, state[3], state[4]), action, 1))
+                elif which_corner_or_none == 2:
+                    successors.append(((nextState, state[1], state[2], True, state[4]), action, 1))
+                elif which_corner_or_none == 3:
+                    successors.append(((nextState, state[1], state[2], state[3], True), action, 1))
                 else:
-                    nextState.cornersVisited = state.cornersVisited     #if it's not a corner, just add previous set of visited Corners
-                successors.append( (nextState, action, 1) )
+                    successors.append(((nextState, state[1], state[2], state[3], state[4]), action, 1))
 
+        # Bookkeeping for display purposes
+        self._expanded += 1  # DO NOT CHANGE
 
-
-        self._expanded += 1 # DO NOT CHANGE
-        #print successors
         return successors
 
+    def isCorner(self, position):
+
+        #given state, returns 0-3 indicating which corner has been visited
+        if position == self.corners[0]:
+            return 0
+        elif position == self.corners[1]:
+            return 1
+        elif position == self.corners[2]:
+            return 2
+        elif position == self.corners[3]:
+            return 3
+
+        #if none returns, then no goal is reached
+        return -1
 
 
     def getCostOfActions(self, actions):
