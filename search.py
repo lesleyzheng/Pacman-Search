@@ -186,6 +186,7 @@ def breadthFirstSearch(problem):
         currentNode = frontier.pop()
         if problem.isGoalState(currentNode.nodeGetCurrentState()):
             return Solution(currentNode)
+
         if currentNode.nodeGetCurrentState() not in explored:
             explored.add(currentNode.nodeGetCurrentState())
 
@@ -194,7 +195,7 @@ def breadthFirstSearch(problem):
                 childNode = Node(problem=problem, stateCurrent=successor[0], nodePrev=currentNode, action=successor[1])
 
                 if childNode.nodeGetCurrentState() not in explored:
-
+                    print childNode.nodeGetCurrentState().pacmanPos, "****************not in explored; adding to frontier****************"
                     frontier.push(childNode)
 
     return None
