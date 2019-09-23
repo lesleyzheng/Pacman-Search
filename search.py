@@ -58,17 +58,20 @@ class Node:
 def Solution(backTraceStartNode):
     currentNode = backTraceStartNode
     actions = []
+    costs = []
     actions.append(currentNode.nodeGetAction())
+    costs.append(currentNode.nodeGetCost())
     while currentNode.nodeGetPrevState() != None:
 
         currentNode = currentNode.nodeGetPrevState()
 
         if currentNode.nodeGetAction() != None:
             actions.append(currentNode.nodeGetAction())
+            costs.append(currentNode.nodeGetCost())
 
 
     actions.reverse()
-
+    print "costs = ", costs
     return actions
 
 
@@ -277,7 +280,7 @@ def aStarSearch(problem, heuristic=nullHeuristic):
                                  cost=successor[2] + currentNode.nodeGetCost(),
                                  heuristicCost=aStarCost(gn=(successor[2] + currentNode.nodeGetCost()),
                                                          position=successor[0], problem=problem, heuristic=heuristic))
-
+               # print childNode.nodeGetCost()
                 if childNode.nodeGetCurrentState() not in explored:
 
                     frontier.push(childNode, childNode.nodeGetHeuristicCost())
