@@ -262,6 +262,11 @@ def euclideanHeuristic(position, problem, info={}):
     xy2 = problem.goal
     return ( (xy1[0] - xy2[0]) ** 2 + (xy1[1] - xy2[1]) ** 2 ) ** 0.5
 
+def min_manhattan_euclidean_Heuristic(position, problem):
+    xy1 = position
+    xy2 = problem.goal
+    return min(((xy1[0] - xy2[0]) ** 2 + (xy1[1] - xy2[1]) ** 2) ** 0.5, abs(xy1[0] - xy2[0]) + abs(xy1[1] - xy2[1]))
+
 #####################################################
 # This portion is incomplete.  Time to write code!  #
 #####################################################
@@ -398,6 +403,13 @@ def cornersHeuristic(state, problem):
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
 
     "*** YOUR CODE HERE ***"
+    xy1 = state[0]
+
+    #find all min euclidean manhattan distances to all corners
+
+
+
+
     return 0 # Default to trivial solution
 
 class AStarCornersAgent(SearchAgent):
