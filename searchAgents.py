@@ -11,7 +11,7 @@
 # Student side autograding was added by Brad Miller, Nick Hay, and
 # Pieter Abbeel (pabbeel@cs.berkeley.edu).
 
-import copy
+import math
 """
 This file contains all of the agents that can be selected to control Pacman.  To
 select an agent, use the '-p' option when running pacman.py.  Arguments can be
@@ -262,6 +262,18 @@ def euclideanHeuristic(position, problem, info={}):
     xy2 = problem.goal
     return ( (xy1[0] - xy2[0]) ** 2 + (xy1[1] - xy2[1]) ** 2 ) ** 0.5
 
+def manhattanHeuristic2(position, goal, info={}):
+    "The Manhattan distance heuristic for a PositionSearchProblem"
+    xy1 = position
+    xy2 = goal
+    return abs(xy1[0] - xy2[0]) + abs(xy1[1] - xy2[1])
+
+def euclideanHeuristic2(position, goal):
+    "The Euclidean distance heuristic for a PositionSearchProblem"
+    xy1 = position
+    xy2 = goal
+    return ( (xy1[0] - xy2[0]) ** 2 + (xy1[1] - xy2[1]) ** 2 ) ** 0.5
+
 def max_manhattan_euclidean_Heuristic(position, goal):
     xy1 = position
     xy2 = goal
@@ -402,16 +414,21 @@ def cornersHeuristic(state, problem):
     corners = problem.corners # These are the corner coordinates
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
 
-    "*** YOUR CODE HERE ***"
-    max = -1
 
+    "*** YOUR CODE HERE ***"
+
+    max = -1
+    if problem.isGoalState(state):
+        return 0
     for i in range(1, len(state)):
         if not state[i]:
-            dist = max_manhattan_euclidean_Heuristic(state[0], corners[i-1])
+            dist = manhattanHeuristic2(state[0], corners[i-1])
             if dist > max:
                 max = dist
 
-    return max # Default to trivial solution
+    return max
+
+
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
