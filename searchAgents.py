@@ -269,11 +269,13 @@ def manhattanHeuristic2(position, goal, info={}):
     xy2 = goal
     return abs(xy1[0] - xy2[0]) + abs(xy1[1] - xy2[1])
 
+
 def euclideanHeuristic2(position, goal):
     "The Euclidean distance heuristic for a PositionSearchProblem"
     xy1 = position
     xy2 = goal
     return ( (xy1[0] - xy2[0]) ** 2 + (xy1[1] - xy2[1]) ** 2 ) ** 0.5
+
 
 def max_manhattan_euclidean_Heuristic(position, goal):
     xy1 = position
@@ -306,32 +308,24 @@ class CornersProblem(search.SearchProblem):
             if not startingGameState.hasFood(*corner):
                 print 'Warning: no food in corner ' + str(corner)
         self._expanded = 0 # DO NOT CHANGE; Number of search nodes expanded
-        # Please add any code here which you would like to use
-
 
     def getStartState(self):
         """
         Returns the start state (in your state space, not the full Pacman state
         space)
         """
-        #
-
+        #return a new state representation, that includes information about corner visits
         return (self.startingPosition, False, False, False, False)
-        #util.raiseNotDefined()
-
 
     def isGoalState(self, state):
         """
         Returns whether this search state is a goal state of the problem.
                                # Only if all 4 corners have been visited should you return true
         """
-
-        for i in range(1, len(state)):
-            if state[i] == False:
+        for i in range(1, len(state)): #iterates for all four goals
+            if not state[i]: #original: if state[i] == False
                 return False
-        print "============================== GOAL STATE =============================="
         return True
-
 
     def getSuccessors(self, state):
         """
@@ -348,12 +342,15 @@ class CornersProblem(search.SearchProblem):
             x, y = state[0]
             dx, dy = Actions.directionToVector(action)
             nextx, nexty = int(x + dx), int(y + dy)
+            #above is the original code
+
             if not self.walls[nextx][nexty]:
                 nextState = (nextx, nexty)
 
                 # task is to create another "state" and check if the next state position hits a wall
                 which_corner_or_none = self.isCorner(nextState)
 
+                # creates specific state based on where the position is
                 if which_corner_or_none == 0:
                     successors.append(((nextState, True, state[2], state[3], state[4]), action, 1))
                 elif which_corner_or_none == 1:
@@ -371,6 +368,9 @@ class CornersProblem(search.SearchProblem):
         return successors
 
     def isCorner(self, position):
+        '''
+        Helper function for getSuccessors. Returns if the position is at a corner... or not.
+        '''
 
         #given state, returns 0-3 indicating which corner has been visited
         if position == self.corners[0]:
@@ -384,7 +384,6 @@ class CornersProblem(search.SearchProblem):
 
         #if none returns, then no goal is reached
         return -1
-
 
     def getCostOfActions(self, actions):
         """
@@ -433,6 +432,7 @@ class AStarCornersAgent(SearchAgent):
     def __init__(self):
         self.searchFunction = lambda prob: search.aStarSearch(prob, cornersHeuristic)
         self.searchType = CornersProblem
+
 
 class FoodSearchProblem:
     """
@@ -484,6 +484,7 @@ class FoodSearchProblem:
             cost += 1
         return cost
 
+
 class AStarFoodSearchAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
     def __init__(self):
@@ -518,24 +519,25 @@ def foodHeuristic(state, problem):
     Subsequent calls to this heuristic can access
     problem.heuristicInfo['wallCount']
     """
-    position, foodGrid = state
-    current_food_positions = foodGrid.asList() #list of tuples indicating the positions of remaining food
 
-    max = -1
+    # new code below:
+
+    position, foodGrid = state
+    current_food_positions = foodGrid.asList()  # list of tuples indicating the positions of remaining food
 
     if problem.isGoalState(state):
         return 0
 
-    # total = 0
+    total = 0
     for i in range(len(current_food_positions)):
-        #iterate through current food positions
-        #find the distance between food remaining and pacman position
+        # iterate through current food positions
+        # find the distance between food remaining and pacman position
         dist = euclideanHeuristic2(position, current_food_positions[i])
-        # total += dist
-        if dist > max:
-            max = dist
+        total += dist
+        # if dist > max:
+        #     max = dist
 
-    return max
+    return total / len(current_food_positions)
 
 
 class ClosestDotSearchAgent(SearchAgent):
@@ -569,17 +571,17 @@ class ClosestDotSearchAgent(SearchAgent):
 
         min_index = -1
         for i in range(len(foodList)):
-            #find the distance between food.asList[i] and startPosition
+
+            # find the distance between food.asList[i] and startPosition
             dist = euclideanHeuristic2(foodList[i], startPosition)
 
-            #keep the closest food index
+            # keep the closest food index
             if dist < min_index:
                 min_index = dist
 
         problem.goal = foodList[i]
 
         return search.breadthFirstSearch(problem)
-
 
 
 class AnyFoodSearchProblem(PositionSearchProblem):
@@ -607,7 +609,6 @@ class AnyFoodSearchProblem(PositionSearchProblem):
         self.costFn = lambda x: 1
         self._visited, self._visitedlist, self._expanded = {}, [], 0 # DO NOT CHANGE
 
-
     def isGoalState(self, state):
         """
         The state is Pacman's position. Fill this in with a goal test that will
@@ -619,6 +620,7 @@ class AnyFoodSearchProblem(PositionSearchProblem):
         if state in foodList:
             return True
         return False
+
 
 def mazeDistance(point1, point2, gameState):
     """

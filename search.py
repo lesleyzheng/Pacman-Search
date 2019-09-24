@@ -16,10 +16,9 @@
 In search.py, you will implement generic search algorithms which are called by
 Pacman agents (in searchAgents.py).
 """
-
 import util
 
-#===========================================Basic Structure===========================================
+
 class Node:
 
     def __init__(self, problem, stateCurrent, cost=1, heuristicCost = 0, nodePrev = None, action=None):
@@ -56,11 +55,13 @@ class Node:
 
 
 def Solution(backTraceStartNode):
+
     currentNode = backTraceStartNode
     actions = []
     costs = []
     actions.append(currentNode.nodeGetAction())
     costs.append(currentNode.nodeGetHeuristicCost() - currentNode.nodeGetCost())
+
     while currentNode.nodeGetPrevState() != None:
 
         currentNode = currentNode.nodeGetPrevState()
@@ -69,14 +70,12 @@ def Solution(backTraceStartNode):
             actions.append(currentNode.nodeGetAction())
             costs.append(currentNode.nodeGetHeuristicCost() - currentNode.nodeGetCost())
 
-
     actions.reverse()
     costs.reverse()
-    print "costs = ", costs
+
     return actions
 
 
-#=======================================================================================================
 class SearchProblem:
     """
     This class outlines the structure of a search problem, but doesn't implement
@@ -128,7 +127,8 @@ def tinyMazeSearch(problem):
     from game import Directions
     s = Directions.SOUTH
     w = Directions.WEST
-    return  [s, s, w, s, w, w, s, w]
+    return [s, s, w, s, w, w, s, w]
+
 
 def depthFirstSearch(problem):
     """
@@ -203,6 +203,7 @@ def breadthFirstSearch(problem):
 
     return None
 
+
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
 
@@ -237,12 +238,14 @@ def uniformCostSearch(problem):
 
     return None
 
+
 def nullHeuristic(state, problem=None):
     """
     A heuristic function estimates the cost from the current state to the nearest
     goal in the provided SearchProblem.  This heuristic is trivial.
     """
     return 0
+
 
 def aStarCost(gn, position, problem, heuristic=nullHeuristic):
     # gn is the total cost up until position
@@ -253,6 +256,7 @@ def aStarCost(gn, position, problem, heuristic=nullHeuristic):
 
     return fn
 
+
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
 
@@ -260,7 +264,6 @@ def aStarSearch(problem, heuristic=nullHeuristic):
                     stateCurrent=problem.getStartState())  # don't need to set cost bc its the first and only item so far
 
     if problem.isGoalState(nodeInit.nodeGetCurrentState()):
-        print "FIRST NODE IS SOLUTION"
         return Solution(nodeInit)
 
     frontier = util.PriorityQueue()
