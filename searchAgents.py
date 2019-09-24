@@ -262,6 +262,7 @@ def euclideanHeuristic(position, problem, info={}):
     xy2 = problem.goal
     return ( (xy1[0] - xy2[0]) ** 2 + (xy1[1] - xy2[1]) ** 2 ) ** 0.5
 
+
 def manhattanHeuristic2(position, goal, info={}):
     "The Manhattan distance heuristic for a PositionSearchProblem"
     xy1 = position
@@ -278,6 +279,7 @@ def max_manhattan_euclidean_Heuristic(position, goal):
     xy1 = position
     xy2 = goal
     return max(((xy1[0] - xy2[0]) ** 2 + (xy1[1] - xy2[1]) ** 2) ** 0.5, abs(xy1[0] - xy2[0]) + abs(xy1[1] - xy2[1]))
+
 
 #####################################################
 # This portion is incomplete.  Time to write code!  #
@@ -415,6 +417,7 @@ def cornersHeuristic(state, problem):
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
 
 
+
     "*** YOUR CODE HERE ***"
 
     max = -1
@@ -427,7 +430,6 @@ def cornersHeuristic(state, problem):
                 max = dist
 
     return max
-
 
 
 class AStarCornersAgent(SearchAgent):
