@@ -563,11 +563,24 @@ class ClosestDotSearchAgent(SearchAgent):
         # Here are some useful elements of the startState
         startPosition = gameState.getPacmanPosition()
         food = gameState.getFood()
+        foodList = food.asList()
         walls = gameState.getWalls()
         problem = AnyFoodSearchProblem(gameState)
 
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        min_index = -1
+        for i in range(len(foodList)):
+            #find the distance between food.asList[i] and startPosition
+            dist = euclideanHeuristic2(foodList[i], startPosition)
+
+            #keep the closest food index
+            if dist < min_index:
+                min_index = dist
+
+        problem.goal = foodList[i]
+
+        return search.breadthFirstSearch(problem)
+
+
 
 class AnyFoodSearchProblem(PositionSearchProblem):
     """
@@ -588,12 +601,12 @@ class AnyFoodSearchProblem(PositionSearchProblem):
         "Stores information from the gameState.  You don't need to change this."
         # Store the food for later reference
         self.food = gameState.getFood()
-
         # Store info for the PositionSearchProblem (no need to change this)
         self.walls = gameState.getWalls()
         self.startState = gameState.getPacmanPosition()
         self.costFn = lambda x: 1
         self._visited, self._visitedlist, self._expanded = {}, [], 0 # DO NOT CHANGE
+
 
     def isGoalState(self, state):
         """
@@ -601,9 +614,11 @@ class AnyFoodSearchProblem(PositionSearchProblem):
         complete the problem definition.
         """
         x,y = state
-
+        foodList = self.food.asList()
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        if state in foodList:
+            return True
+        return False
 
 def mazeDistance(point1, point2, gameState):
     """
