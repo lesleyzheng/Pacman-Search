@@ -416,10 +416,6 @@ def cornersHeuristic(state, problem):
     corners = problem.corners # These are the corner coordinates
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
 
-
-
-    "*** YOUR CODE HERE ***"
-
     max = -1
     if problem.isGoalState(state):
         return 0
@@ -523,8 +519,24 @@ def foodHeuristic(state, problem):
     problem.heuristicInfo['wallCount']
     """
     position, foodGrid = state
-    "*** YOUR CODE HERE ***"
-    return 0
+    current_food_positions = foodGrid.asList() #list of tuples indicating the positions of remaining food
+
+    max = -1
+
+    if problem.isGoalState(state):
+        return 0
+
+    # total = 0
+    for i in range(len(current_food_positions)):
+        #iterate through current food positions
+        #find the distance between food remaining and pacman position
+        dist = euclideanHeuristic2(position, current_food_positions[i])
+        # total += dist
+        if dist > max:
+            max = dist
+
+    return max
+
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
